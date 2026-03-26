@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .xlsx_plc_reader import PlcConfig, RtdPoint
+from .xlsx_plc_reader import PhasePoint, PlcConfig, RtdPoint
 
 
 def _module_address_for_rtd(config: PlcConfig, rtd_module: int) -> str:
@@ -8,7 +8,7 @@ def _module_address_for_rtd(config: PlcConfig, rtd_module: int) -> str:
     return f"A1_{module_position + 1}"
 
 
-def render_proc_io(config: PlcConfig, rtd_points: list[RtdPoint]) -> str:
+def render_proc_io(config: PlcConfig, rtd_points: list[RtdPoint], phase_points: list[PhasePoint]) -> str:
     lines: list[str] = []
     lines.append("//------------------------- Первая инициализируемая программа, в которой считываются данные от модулей -------------------------")
     lines.append("(*----------------------------Расчёт ошибки датчика температуры -----------------------------------*)")
@@ -35,5 +35,12 @@ def render_proc_io(config: PlcConfig, rtd_points: list[RtdPoint]) -> str:
         lines.append(
             f"GVL.DataPack.aDT[{dt_index}].wErrDT := TO_WORD(tonErr[{dt_index}].Q OR TOF_AlarmRTD[{point.module}].Q);"
         )
+
+    lines.append("")
+    lines.append("// Инициализируем фазировку")
+    phase_map = {point.line_no: point.phase_code for point in phase_points}
+    for line_no in range(1, config.count_lines + 1):
+        phase_code = phase_map.get(line_no, 0)
+        lines.append(f"GVL.inNumL[{line_no}] := {phase_code};")
 
     return "\n".join(lines) + "\n"

@@ -34,6 +34,12 @@ class RtdPoint:
     channel: int
 
 
+@dataclass(frozen=True)
+class PhasePoint:
+    line_no: int
+    phase_code: int
+
+
 def _col_to_index(col: str) -> int:
     result = 0
     for ch in col:
@@ -186,3 +192,49 @@ def read_rtd_points(xlsx_path: str | Path) -> list[RtdPoint]:
             continue
 
     return points
+
+
+def _phase_code_from_text(phase_text: str) -> int:
+    normalized = phase_text.upper().replace(" ", "")
+    normalized = normalized.replace("A", "А").replace("B", "В").replace("C", "С")
+    parts = [p for p in re.split(r"[^АВС]+", normalized) if p]
+    phase_set = set(parts)
+
+    mapping = {
+        frozenset({"А"}): 1,
+        frozenset({"В"}): 2,
+        frozenset({"А", "В"}): 3,
+        frozenset({"С"}): 4,
+        frozenset({"А", "С"}): 5,
+        frozenset({"В", "С"}): 6,
+        frozenset({"А", "В", "С"}): 7,
+    }
+    key = frozenset(phase_set)
+    if key not in mapping:
+        raise ValueError(f"Unsupported phase value: '{phase_text}'")
+    return mapping[key]
+
+
+def read_phase_points(xlsx_path: str | Path) -> list[PhasePoint]:
+    rows = _load_sheet_rows(xlsx_path, "Phase")
+    points: list[PhasePoint] = []
+
+    for row in rows[1:]:
+        phase_text = row.get(1, "")
+        line_text = row.get(2, "")
+
+        if not phase_text or not line_text:
+            continue
+
+        match = re.search(r"(\d+)", line_text)
+        if not match:
+            continue
+
+        points.append(
+            PhasePoint(
+                line_no=int(match.group(1)),
+                phase_code=_phase_code_from_text(phase_text),
+            )
+        )
+
+    return sorted(points, key=lambda p: p.line_no)
