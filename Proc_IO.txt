@@ -1,0 +1,172 @@
+//------------------------- Первая инициализируемая программа, в которой считываются данные от модулей -------------------------
+(*----------------------------Расчёт ошибки датчика температуры -----------------------------------*)
+// Инициализация датчиков и проверка их состояния
+
+TOF_AlarmRTD[1](IN := A1_13.xError, PT := T#2S);
+TOF_AlarmRTD[2](IN := A1_14.xError, PT := T#2S);
+TOF_AlarmRTD[3](IN := A1_15.xError, PT := T#2S);
+TOF_AlarmRTD[4](IN := A1_16.xError, PT := T#2S);
+TOF_AlarmRTD[5](IN := A1_17.xError, PT := T#2S);
+TOF_AlarmRTD[6](IN := A1_18.xError, PT := T#2S);
+TOF_AlarmRTD[7](IN := A1_19.xError, PT := T#2S);
+
+// Датчик 0 (ТЕ0)
+GVL.DataPack.aDT[0].rT := GVL.RTDs[1].arValue[4];
+tonErr[0](IN := GVL.RTDs[1].awStatus[4] <> 0, PT := T#2S);
+GVL.DataPack.aDT[0].wErrDT := TO_WORD(tonErr[0].Q OR TOF_AlarmRTD[1].Q);
+// Датчик 1 (ТЕ1.1)
+GVL.DataPack.aDT[1].rT := GVL.RTDs[1].arValue[1];
+tonErr[1](IN := GVL.RTDs[1].awStatus[1] <> 0, PT := T#2S);
+GVL.DataPack.aDT[1].wErrDT := TO_WORD(tonErr[1].Q OR TOF_AlarmRTD[1].Q);
+// Датчик 2 (ТЕ3.1)
+GVL.DataPack.aDT[2].rT := GVL.RTDs[1].arValue[2];
+tonErr[2](IN := GVL.RTDs[1].awStatus[2] <> 0, PT := T#2S);
+GVL.DataPack.aDT[2].wErrDT := TO_WORD(tonErr[2].Q OR TOF_AlarmRTD[1].Q);
+// Датчик 3 (ТЕ4.1)
+GVL.DataPack.aDT[3].rT := GVL.RTDs[1].arValue[3];
+tonErr[3](IN := GVL.RTDs[1].awStatus[3] <> 0, PT := T#2S);
+GVL.DataPack.aDT[3].wErrDT := TO_WORD(tonErr[3].Q OR TOF_AlarmRTD[1].Q);
+// Датчик 4 (ТЕ5.1)
+GVL.DataPack.aDT[4].rT := GVL.RTDs[2].arValue[4];
+tonErr[4](IN := GVL.RTDs[2].awStatus[4] <> 0, PT := T#2S);
+GVL.DataPack.aDT[4].wErrDT := TO_WORD(tonErr[4].Q OR TOF_AlarmRTD[2].Q);
+// Датчик 5 (ТЕ6.1)
+GVL.DataPack.aDT[5].rT := GVL.RTDs[2].arValue[1];
+tonErr[5](IN := GVL.RTDs[2].awStatus[1] <> 0, PT := T#2S);
+GVL.DataPack.aDT[5].wErrDT := TO_WORD(tonErr[5].Q OR TOF_AlarmRTD[2].Q);
+// Датчик 6 (ТЕ7.1)
+GVL.DataPack.aDT[6].rT := GVL.RTDs[2].arValue[2];
+tonErr[6](IN := GVL.RTDs[2].awStatus[2] <> 0, PT := T#2S);
+GVL.DataPack.aDT[6].wErrDT := TO_WORD(tonErr[6].Q OR TOF_AlarmRTD[2].Q);
+// Датчик 7 (ТЕ8.1)
+GVL.DataPack.aDT[7].rT := GVL.RTDs[2].arValue[3];
+tonErr[7](IN := GVL.RTDs[2].awStatus[3] <> 0, PT := T#2S);
+GVL.DataPack.aDT[7].wErrDT := TO_WORD(tonErr[7].Q OR TOF_AlarmRTD[2].Q);
+// Датчик 8 (ТЕ9.1)
+GVL.DataPack.aDT[8].rT := GVL.RTDs[3].arValue[4];
+tonErr[8](IN := GVL.RTDs[3].awStatus[4] <> 0, PT := T#2S);
+GVL.DataPack.aDT[8].wErrDT := TO_WORD(tonErr[8].Q OR TOF_AlarmRTD[3].Q);
+// Датчик 9 (ТЕ9.2)
+GVL.DataPack.aDT[9].rT := GVL.RTDs[3].arValue[1];
+tonErr[9](IN := GVL.RTDs[3].awStatus[1] <> 0, PT := T#2S);
+GVL.DataPack.aDT[9].wErrDT := TO_WORD(tonErr[9].Q OR TOF_AlarmRTD[3].Q);
+// Датчик 10 (ТЕ10.1)
+GVL.DataPack.aDT[10].rT := GVL.RTDs[3].arValue[2];
+tonErr[10](IN := GVL.RTDs[3].awStatus[2] <> 0, PT := T#2S);
+GVL.DataPack.aDT[10].wErrDT := TO_WORD(tonErr[10].Q OR TOF_AlarmRTD[3].Q);
+// Датчик 11 (ТЕ10.2)
+GVL.DataPack.aDT[11].rT := GVL.RTDs[3].arValue[3];
+tonErr[11](IN := GVL.RTDs[3].awStatus[3] <> 0, PT := T#2S);
+GVL.DataPack.aDT[11].wErrDT := TO_WORD(tonErr[11].Q OR TOF_AlarmRTD[3].Q);
+// Датчик 12 (ТЕ11.1)
+GVL.DataPack.aDT[12].rT := GVL.RTDs[4].arValue[4];
+tonErr[12](IN := GVL.RTDs[4].awStatus[4] <> 0, PT := T#2S);
+GVL.DataPack.aDT[12].wErrDT := TO_WORD(tonErr[12].Q OR TOF_AlarmRTD[4].Q);
+// Датчик 13 (ТЕ12.1)
+GVL.DataPack.aDT[13].rT := GVL.RTDs[4].arValue[1];
+tonErr[13](IN := GVL.RTDs[4].awStatus[1] <> 0, PT := T#2S);
+GVL.DataPack.aDT[13].wErrDT := TO_WORD(tonErr[13].Q OR TOF_AlarmRTD[4].Q);
+// Датчик 14 (ТЕ13.1)
+GVL.DataPack.aDT[14].rT := GVL.RTDs[4].arValue[2];
+tonErr[14](IN := GVL.RTDs[4].awStatus[2] <> 0, PT := T#2S);
+GVL.DataPack.aDT[14].wErrDT := TO_WORD(tonErr[14].Q OR TOF_AlarmRTD[4].Q);
+// Датчик 15 (ТЕ14.1)
+GVL.DataPack.aDT[15].rT := GVL.RTDs[4].arValue[3];
+tonErr[15](IN := GVL.RTDs[4].awStatus[3] <> 0, PT := T#2S);
+GVL.DataPack.aDT[15].wErrDT := TO_WORD(tonErr[15].Q OR TOF_AlarmRTD[4].Q);
+// Датчик 16 (ТЕ15.1)
+GVL.DataPack.aDT[16].rT := GVL.RTDs[5].arValue[4];
+tonErr[16](IN := GVL.RTDs[5].awStatus[4] <> 0, PT := T#2S);
+GVL.DataPack.aDT[16].wErrDT := TO_WORD(tonErr[16].Q OR TOF_AlarmRTD[5].Q);
+// Датчик 17 (ТЕ16.1)
+GVL.DataPack.aDT[17].rT := GVL.RTDs[5].arValue[1];
+tonErr[17](IN := GVL.RTDs[5].awStatus[1] <> 0, PT := T#2S);
+GVL.DataPack.aDT[17].wErrDT := TO_WORD(tonErr[17].Q OR TOF_AlarmRTD[5].Q);
+// Датчик 18 (ТЕ17.1)
+GVL.DataPack.aDT[18].rT := GVL.RTDs[5].arValue[2];
+tonErr[18](IN := GVL.RTDs[5].awStatus[2] <> 0, PT := T#2S);
+GVL.DataPack.aDT[18].wErrDT := TO_WORD(tonErr[18].Q OR TOF_AlarmRTD[5].Q);
+// Датчик 19 (ТЕ18.1)
+GVL.DataPack.aDT[19].rT := GVL.RTDs[5].arValue[3];
+tonErr[19](IN := GVL.RTDs[5].awStatus[3] <> 0, PT := T#2S);
+GVL.DataPack.aDT[19].wErrDT := TO_WORD(tonErr[19].Q OR TOF_AlarmRTD[5].Q);
+// Датчик 20 (ТЕ19.1)
+GVL.DataPack.aDT[20].rT := GVL.RTDs[6].arValue[4];
+tonErr[20](IN := GVL.RTDs[6].awStatus[4] <> 0, PT := T#2S);
+GVL.DataPack.aDT[20].wErrDT := TO_WORD(tonErr[20].Q OR TOF_AlarmRTD[6].Q);
+// Датчик 21 (ТЕ20.1)
+GVL.DataPack.aDT[21].rT := GVL.RTDs[6].arValue[1];
+tonErr[21](IN := GVL.RTDs[6].awStatus[1] <> 0, PT := T#2S);
+GVL.DataPack.aDT[21].wErrDT := TO_WORD(tonErr[21].Q OR TOF_AlarmRTD[6].Q);
+// Датчик 22 (ТЕ21.1)
+GVL.DataPack.aDT[22].rT := GVL.RTDs[6].arValue[2];
+tonErr[22](IN := GVL.RTDs[6].awStatus[2] <> 0, PT := T#2S);
+GVL.DataPack.aDT[22].wErrDT := TO_WORD(tonErr[22].Q OR TOF_AlarmRTD[6].Q);
+// Датчик 23 (ТЕ22.1)
+GVL.DataPack.aDT[23].rT := GVL.RTDs[6].arValue[3];
+tonErr[23](IN := GVL.RTDs[6].awStatus[3] <> 0, PT := T#2S);
+GVL.DataPack.aDT[23].wErrDT := TO_WORD(tonErr[23].Q OR TOF_AlarmRTD[6].Q);
+
+// Инициализируем фазировку
+GVL.inNumL[1] := 3;
+GVL.inNumL[2] := 7;
+GVL.inNumL[3] := 6;
+GVL.inNumL[4] := 1;
+GVL.inNumL[5] := 2;
+GVL.inNumL[6] := 1;
+GVL.inNumL[7] := 1;
+GVL.inNumL[8] := 3;
+GVL.inNumL[9] := 1;
+GVL.inNumL[10] := 2;
+GVL.inNumL[11] := 4;
+GVL.inNumL[12] := 1;
+GVL.inNumL[13] := 2;
+GVL.inNumL[14] := 2;
+GVL.inNumL[15] := 2;
+GVL.inNumL[16] := 4;
+GVL.inNumL[17] := 1;
+GVL.inNumL[18] := 2;
+GVL.inNumL[19] := 4;
+GVL.inNumL[20] := 1;
+GVL.inNumL[21] := 2;
+GVL.inNumL[22] := 4;
+GVL.inNumL[23] := 4;
+GVL.inNumL[24] := 7;
+GVL.inNumL[25] := 1;
+GVL.inNumL[26] := 6;
+GVL.inNumL[27] := 3;
+GVL.inNumL[28] := 4;
+GVL.inNumL[29] := 7;
+GVL.inNumL[30] := 2;
+GVL.inNumL[31] := 7;
+GVL.inNumL[32] := 7;
+
+// Инициализируем ошибки модулей
+GVL.Err_mod[1]	:=	A1_2.xError;	// AI-модуль
+GVL.Err_mod[2]	:=	A1_3.xError;	// AI-модуль
+GVL.Err_mod[3]	:=	A1_4.xError;	// AI-модуль
+GVL.Err_mod[4]	:=	A1_5.xError;	// AI-модуль
+GVL.Err_mod[5]	:=	A1_6.xError;	// AI-модуль
+GVL.Err_mod[6]	:=	A1_7.xError;	// AI-модуль
+GVL.Err_mod[7]	:=	A1_8.xError;	// AI-модуль
+GVL.Err_mod[8]	:=	A1_9.xError;	// AI-модуль
+GVL.Err_mod[9]	:=	A1_10.xError;	// AI-модуль
+GVL.Err_mod[10]	:=	A1_11.xError;	// AI-модуль
+GVL.Err_mod[11]	:=	A1_12.xError;	// AI-модуль
+GVL.Err_mod[12]	:=	A1_13.xError;	// RTD-модуль
+GVL.Err_mod[13]	:=	A1_14.xError;	// RTD-модуль
+GVL.Err_mod[14]	:=	A1_15.xError;	// RTD-модуль
+GVL.Err_mod[15]	:=	A1_16.xError;	// RTD-модуль
+GVL.Err_mod[16]	:=	A1_17.xError;	// RTD-модуль
+GVL.Err_mod[17]	:=	A1_18.xError;	// RTD-модуль
+GVL.Err_mod[18]	:=	A1_19.xError;	// RTD-модуль
+GVL.Err_mod[19]	:=	A1_20.xError;	// DI-модуль
+GVL.Err_mod[20]	:=	A1_21.xError;	// DI-модуль
+GVL.Err_mod[21]	:=	A1_22.xError;	// DI-модуль
+GVL.Err_mod[22]	:=	A1_23.xError;	// DI-модуль
+GVL.Err_mod[23]	:=	A1_24.xError;	// DI-модуль
+GVL.Err_mod[24]	:=	A1_25.xError;	// DI-модуль
+GVL.Err_mod[25]	:=	A1_26.xError;	// DI-модуль
+GVL.Err_mod[26]	:=	A1_27.xError;	// DO-модуль
+GVL.Err_mod[27]	:=	A1_28.xError;	// DO-модуль
+GVL.Err_mod[28]	:=	A1_29.xError;	// DO-модуль

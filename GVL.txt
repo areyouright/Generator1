@@ -1,0 +1,31 @@
+// Generated GVL
+{attribute 'qualified_only'}
+VAR_GLOBAL RETAIN
+	DataPack:				stDataPack;			// Массив всех данных для передачи по типу данных 4x
+END_VAR
+
+VAR_GLOBAL CONSTANT
+	gc_countL:				UINT		:= 32;	// Кол-во линий
+	gc_countDt:				UINT		:= 23;	// Количество датчиков т-ры, отсчитывая от нуля
+	gc_count_modules:		UINT		:= 28;	// Общее количество модулей
+	gc_first_group:			UINT		:= 17;	// Кол-во линий в первой группе
+	gc_countRegs:			UINT		:= 400;	// Кол-во регистров в DataPack'e - выставляем с небольшим запасом
+	count_ai:				UINT		:= 11;	// Количество AI-модулей
+	count_rtd:				UINT		:= 7;	// Количество RTD-модулей
+	count_di:				UINT		:= 7;	// Количество DI-модулей
+	count_do:				UINT		:= 3;	// Количество DO-модулей
+END_VAR
+
+VAR_GLOBAL
+
+	inNumL:					ARRAY [1..gc_countL] OF UINT;				//массив фазировки линий
+	alarmQFD:				ARRAY [1..gc_countL] OF BOOL;				// массив сработок дифф. автоматов
+	Err_mod:				ARRAY [1..gc_count_modules] OF BOOL;		// массив ошибок модулей
+
+(*----------------------------------------------------------*)
+	AIs 	:	ARRAY [1..count_ai]		OF stAI;		// AI-модули (Софтитек)
+	RTDs	:	ARRAY [1..count_rtd]	OF stRTD;		// RTD-модули (Софтитек)
+	DIs		:	ARRAY [1..count_di]		OF WORD;		// DI-модули (Софтитек)
+	DOs		:	ARRAY [1..count_do]		OF WORD;		// DO-модули (Софтитек)
+	
+END_VAR
