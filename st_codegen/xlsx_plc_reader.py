@@ -27,6 +27,13 @@ class PlcConfig:
         return self.count_ai + self.count_rtd + self.count_di + self.count_do
 
 
+@dataclass(frozen=True)
+class RtdPoint:
+    tag: str
+    module: int
+    channel: int
+
+
 def _col_to_index(col: str) -> int:
     result = 0
     for ch in col:
@@ -105,12 +112,16 @@ def _read_sheet_rows(zf: zipfile.ZipFile, sheet_path: str, shared_strings: list[
     return rows
 
 
-def read_plc_config(xlsx_path: str | Path) -> PlcConfig:
+def _load_sheet_rows(xlsx_path: str | Path, sheet_name: str) -> list[dict[int, str]]:
     xlsx = Path(xlsx_path)
     with zipfile.ZipFile(xlsx) as zf:
         shared_strings = _read_shared_strings(zf)
-        plc_sheet_path = _sheet_path_by_name(zf, "PLC")
-        rows = _read_sheet_rows(zf, plc_sheet_path, shared_strings)
+        sheet_path = _sheet_path_by_name(zf, sheet_name)
+        return _read_sheet_rows(zf, sheet_path, shared_strings)
+
+
+def read_plc_config(xlsx_path: str | Path) -> PlcConfig:
+    rows = _load_sheet_rows(xlsx_path, "PLC")
 
     params: dict[str, int] = {}
     for row in rows:
@@ -127,16 +138,16 @@ def read_plc_config(xlsx_path: str | Path) -> PlcConfig:
             continue
 
     required = {
-        "count ai": "count_ai",
-        "count rtd": "count_rtd",
-        "count di": "count_di",
-        "count do": "count_do",
-        "count lines": "count_lines",
-        "count dt": "count_dt",
-        "first_group": "first_group",
+        "count ai",
+        "count rtd",
+        "count di",
+        "count do",
+        "count lines",
+        "count dt",
+        "first_group",
     }
 
-    missing = [excel_key for excel_key in required if excel_key not in params]
+    missing = [excel_key for excel_key in sorted(required) if excel_key not in params]
     if missing:
         raise ValueError(f"Missing PLC parameters in Excel: {', '.join(missing)}")
 
@@ -149,3 +160,29 @@ def read_plc_config(xlsx_path: str | Path) -> PlcConfig:
         count_dt=params["count dt"],
         first_group=params["first_group"],
     )
+
+
+def read_rtd_points(xlsx_path: str | Path) -> list[RtdPoint]:
+    rows = _load_sheet_rows(xlsx_path, "RTD")
+    points: list[RtdPoint] = []
+
+    for row in rows[1:]:
+        tag = row.get(1, "")
+        module = row.get(2, "")
+        channel = row.get(3, "")
+
+        if not tag or not module or not channel:
+            continue
+
+        try:
+            points.append(
+                RtdPoint(
+                    tag=tag,
+                    module=int(float(module)),
+                    channel=int(float(channel)),
+                )
+            )
+        except ValueError:
+            continue
+
+    return points
