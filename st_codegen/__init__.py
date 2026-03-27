@@ -16,6 +16,7 @@ from .xlsx_plc_reader import (
 )
 from .gvl_generator import render_gvl
 from .proc_io_generator import render_proc_io
+from .protocol_generator import render_protocol_excel
 
 __all__ = [
     "PhasePoint",
@@ -32,4 +33,5 @@ __all__ = [
     "read_rtd_points",
     "render_gvl",
     "render_proc_io",
+    "render_protocol_excel",
 ]
