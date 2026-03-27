@@ -4,7 +4,15 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from st_codegen import read_phase_points, read_plc_config, read_rtd_points, render_proc_io
+from st_codegen import (
+    read_ai_points,
+    read_di_points,
+    read_do_points,
+    read_phase_points,
+    read_plc_config,
+    read_rtd_points,
+    render_proc_io,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -29,9 +37,12 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     config = read_plc_config(args.xlsx_path)
+    ai_points = read_ai_points(args.xlsx_path)
+    do_points = read_do_points(args.xlsx_path)
+    di_points = read_di_points(args.xlsx_path)
     rtd_points = read_rtd_points(args.xlsx_path)
     phase_points = read_phase_points(args.xlsx_path)
-    proc_io_text = render_proc_io(config, rtd_points, phase_points)
+    proc_io_text = render_proc_io(config, ai_points, do_points, di_points, rtd_points, phase_points)
     Path(args.output_path).write_text(proc_io_text, encoding="utf-8")
     print(f"Generated {args.output_path}")
 
