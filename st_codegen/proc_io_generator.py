@@ -207,6 +207,48 @@ def _append_di_states(lines: list[str], config: PlcConfig, do_points: list[DoPoi
     lines.append("")
 
 
+def _append_do_commands(lines: list[str], config: PlcConfig, do_points: list[DoPoint]) -> None:
+    km_points = [point for point in do_points if re.fullmatch(r"km\d+(?:\.\d+)?", point.tag.strip().lower())]
+    lines_on_point: DoPoint | None = None
+    alarm_all_point: DoPoint | None = None
+    fail_sensor_point: DoPoint | None = None
+
+    for point in do_points:
+        tag = point.tag.strip().lower()
+        if tag == "lineson":
+            lines_on_point = point
+        elif tag == "alall":
+            alarm_all_point = point
+        elif tag in {"aldt", "alsensor", "failsensor"}:
+            fail_sensor_point = point
+
+    lines.append("////////\tЗапись команд включения линии (контактора) на DO")
+    line_no = 0
+    for point in km_points:
+        if line_no >= config.count_lines:
+            break
+        line_no += 1
+        lines.append(
+            f"GVL.DOs[{point.module}].{point.channel - 1} :=  "
+            f"GVL.DataPack.Lines[{line_no}].State.bState.TS.xOUT_DO;"
+        )
+
+    lines.append("")
+    if lines_on_point is not None:
+        lines.append(
+            f"GVL.DOs[{lines_on_point.module}].{lines_on_point.channel - 1} :=\tGVL.DataPack.advance.bState.LinesOn;\t\t// Обогрев включен \t\t\t\t(сигнал на лампочку)"
+        )
+    if alarm_all_point is not None:
+        lines.append(
+            f"GVL.DOs[{alarm_all_point.module}].{alarm_all_point.channel - 1} :=\tGVL.DataPack.advance.bState.AlarmAll;\t\t// Общая авария\t   \t\t\t\t(сигнал на лампочку)"
+        )
+    if fail_sensor_point is not None:
+        lines.append(
+            f"GVL.DOs[{fail_sensor_point.module}].{fail_sensor_point.channel - 1} :=\tGVL.DataPack.advance.bState.FailSensor;\t\t// Авария датчика температура \t(сигнал на лампочку)"
+        )
+    lines.append("")
+
+
 def render_proc_io(
     config: PlcConfig,
     ai_points: list[AiPoint],
@@ -245,6 +287,7 @@ def render_proc_io(
     lines.append("")
     _append_ai_currents(lines, config, ai_points, do_points)
     _append_di_states(lines, config, do_points, di_points)
+    _append_do_commands(lines, config, do_points)
 
     lines.append("// Инициализируем фазировку")
     phase_map = {point.line_no: point.phase_code for point in phase_points}

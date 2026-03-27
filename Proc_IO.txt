@@ -363,6 +363,43 @@ GVL.DataPack.Lines[32].State.bState.TS.xON_OFF := GVL.DIs[6].5;
 GVL.DataPack.advance.bState.ManuON	:=	GVL.DIs[6].6;	// Обогрев в ручном режиме
 GVL.DataPack.advance.bState.Auto	:=	GVL.DIs[6].7;	// Обогрев в автоматическом режиме
 
+////////	Запись команд включения линии (контактора) на DO
+GVL.DOs[1].12 :=  GVL.DataPack.Lines[1].State.bState.TS.xOUT_DO;
+GVL.DOs[1].13 :=  GVL.DataPack.Lines[2].State.bState.TS.xOUT_DO;
+GVL.DOs[1].14 :=  GVL.DataPack.Lines[3].State.bState.TS.xOUT_DO;
+GVL.DOs[1].15 :=  GVL.DataPack.Lines[4].State.bState.TS.xOUT_DO;
+GVL.DOs[1].0 :=  GVL.DataPack.Lines[5].State.bState.TS.xOUT_DO;
+GVL.DOs[1].1 :=  GVL.DataPack.Lines[6].State.bState.TS.xOUT_DO;
+GVL.DOs[1].2 :=  GVL.DataPack.Lines[7].State.bState.TS.xOUT_DO;
+GVL.DOs[1].3 :=  GVL.DataPack.Lines[8].State.bState.TS.xOUT_DO;
+GVL.DOs[1].4 :=  GVL.DataPack.Lines[9].State.bState.TS.xOUT_DO;
+GVL.DOs[1].5 :=  GVL.DataPack.Lines[10].State.bState.TS.xOUT_DO;
+GVL.DOs[1].6 :=  GVL.DataPack.Lines[11].State.bState.TS.xOUT_DO;
+GVL.DOs[1].7 :=  GVL.DataPack.Lines[12].State.bState.TS.xOUT_DO;
+GVL.DOs[1].8 :=  GVL.DataPack.Lines[13].State.bState.TS.xOUT_DO;
+GVL.DOs[1].9 :=  GVL.DataPack.Lines[14].State.bState.TS.xOUT_DO;
+GVL.DOs[1].10 :=  GVL.DataPack.Lines[15].State.bState.TS.xOUT_DO;
+GVL.DOs[1].11 :=  GVL.DataPack.Lines[16].State.bState.TS.xOUT_DO;
+GVL.DOs[2].12 :=  GVL.DataPack.Lines[17].State.bState.TS.xOUT_DO;
+GVL.DOs[2].13 :=  GVL.DataPack.Lines[18].State.bState.TS.xOUT_DO;
+GVL.DOs[2].14 :=  GVL.DataPack.Lines[19].State.bState.TS.xOUT_DO;
+GVL.DOs[2].15 :=  GVL.DataPack.Lines[20].State.bState.TS.xOUT_DO;
+GVL.DOs[2].0 :=  GVL.DataPack.Lines[21].State.bState.TS.xOUT_DO;
+GVL.DOs[2].1 :=  GVL.DataPack.Lines[22].State.bState.TS.xOUT_DO;
+GVL.DOs[2].2 :=  GVL.DataPack.Lines[23].State.bState.TS.xOUT_DO;
+GVL.DOs[2].3 :=  GVL.DataPack.Lines[24].State.bState.TS.xOUT_DO;
+GVL.DOs[2].4 :=  GVL.DataPack.Lines[25].State.bState.TS.xOUT_DO;
+GVL.DOs[2].5 :=  GVL.DataPack.Lines[26].State.bState.TS.xOUT_DO;
+GVL.DOs[2].6 :=  GVL.DataPack.Lines[27].State.bState.TS.xOUT_DO;
+GVL.DOs[2].7 :=  GVL.DataPack.Lines[28].State.bState.TS.xOUT_DO;
+GVL.DOs[2].8 :=  GVL.DataPack.Lines[29].State.bState.TS.xOUT_DO;
+GVL.DOs[2].9 :=  GVL.DataPack.Lines[30].State.bState.TS.xOUT_DO;
+GVL.DOs[2].10 :=  GVL.DataPack.Lines[31].State.bState.TS.xOUT_DO;
+GVL.DOs[2].11 :=  GVL.DataPack.Lines[32].State.bState.TS.xOUT_DO;
+
+GVL.DOs[3].12 :=	GVL.DataPack.advance.bState.LinesOn;		// Обогрев включен 				(сигнал на лампочку)
+GVL.DOs[3].13 :=	GVL.DataPack.advance.bState.AlarmAll;		// Общая авария	   				(сигнал на лампочку)
+
 // Инициализируем фазировку
 GVL.inNumL[1] := 3;
 GVL.inNumL[2] := 7;
