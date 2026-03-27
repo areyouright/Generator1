@@ -7,10 +7,10 @@ END_VAR
 VAR_GLOBAL CONSTANT
 	gc_countL:				UINT		:= 32;	// Кол-во линий
 	gc_countDt:				UINT		:= 23;	// Количество датчиков т-ры, отсчитывая от нуля
-	gc_count_modules:		UINT		:= 28;	// Общее количество модулей
+	gc_count_modules:		UINT		:= 27;	// Общее количество модулей
 	gc_first_group:			UINT		:= 17;	// Кол-во линий в первой группе
 	gc_countRegs:			UINT		:= 400;	// Кол-во регистров в DataPack'e - выставляем с небольшим запасом
-	count_ai:				UINT		:= 11;	// Количество AI-модулей
+	count_ai:				UINT		:= 10;	// Количество AI-модулей
 	count_rtd:				UINT		:= 7;	// Количество RTD-модулей
 	count_di:				UINT		:= 7;	// Количество DI-модулей
 	count_do:				UINT		:= 3;	// Количество DO-модулей
