@@ -6,6 +6,7 @@ from pathlib import Path
 
 from st_codegen import (
     read_ai_points,
+    read_di_points,
     read_do_points,
     read_phase_points,
     read_plc_config,
@@ -38,9 +39,10 @@ def main() -> None:
     config = read_plc_config(args.xlsx_path)
     ai_points = read_ai_points(args.xlsx_path)
     do_points = read_do_points(args.xlsx_path)
+    di_points = read_di_points(args.xlsx_path)
     rtd_points = read_rtd_points(args.xlsx_path)
     phase_points = read_phase_points(args.xlsx_path)
-    proc_io_text = render_proc_io(config, ai_points, do_points, rtd_points, phase_points)
+    proc_io_text = render_proc_io(config, ai_points, do_points, di_points, rtd_points, phase_points)
     Path(args.output_path).write_text(proc_io_text, encoding="utf-8")
     print(f"Generated {args.output_path}")
 
