@@ -399,6 +399,7 @@ GVL.DOs[2].11 :=  GVL.DataPack.Lines[32].State.bState.TS.xOUT_DO;
 
 GVL.DOs[3].12 :=	GVL.DataPack.advance.bState.LinesOn;		// Обогрев включен 				(сигнал на лампочку)
 GVL.DOs[3].13 :=	GVL.DataPack.advance.bState.AlarmAll;		// Общая авария	   				(сигнал на лампочку)
+GVL.DOs[3].14 :=	GVL.DataPack.advance.bState.FailSensor;		// Авария датчика температура 	(сигнал на лампочку)
 
 // Инициализируем фазировку
 GVL.inNumL[1] := 3;
