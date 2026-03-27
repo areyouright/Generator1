@@ -40,6 +40,27 @@ class PhasePoint:
     phase_code: int
 
 
+@dataclass(frozen=True)
+class AiPoint:
+    tag: str
+    module: int
+    channel: int
+
+
+@dataclass(frozen=True)
+class DoPoint:
+    tag: str
+    module: int
+    channel: int
+
+
+@dataclass(frozen=True)
+class DiPoint:
+    tag: str
+    module: int
+    channel: int
+
+
 def _col_to_index(col: str) -> int:
     result = 0
     for ch in col:
@@ -238,3 +259,81 @@ def read_phase_points(xlsx_path: str | Path) -> list[PhasePoint]:
         )
 
     return sorted(points, key=lambda p: p.line_no)
+
+
+def read_ai_points(xlsx_path: str | Path) -> list[AiPoint]:
+    rows = _load_sheet_rows(xlsx_path, "AI")
+    points: list[AiPoint] = []
+
+    for row in rows[1:]:
+        tag = row.get(1, "")
+        module = row.get(2, "")
+        channel = row.get(3, "")
+
+        if not tag or not module or not channel:
+            continue
+
+        try:
+            points.append(
+                AiPoint(
+                    tag=tag,
+                    module=int(float(module)),
+                    channel=int(float(channel)),
+                )
+            )
+        except ValueError:
+            continue
+
+    return points
+
+
+def read_do_points(xlsx_path: str | Path) -> list[DoPoint]:
+    rows = _load_sheet_rows(xlsx_path, "DO")
+    points: list[DoPoint] = []
+
+    for row in rows[1:]:
+        tag = row.get(1, "")
+        module = row.get(2, "")
+        channel = row.get(3, "")
+
+        if not tag or not module or not channel:
+            continue
+
+        try:
+            points.append(
+                DoPoint(
+                    tag=tag,
+                    module=int(float(module)),
+                    channel=int(float(channel)),
+                )
+            )
+        except ValueError:
+            continue
+
+    return points
+
+
+def read_di_points(xlsx_path: str | Path) -> list[DiPoint]:
+    rows = _load_sheet_rows(xlsx_path, "DI")
+    points: list[DiPoint] = []
+
+    for row in rows[1:]:
+        tag = row.get(1, "")
+        module = row.get(2, "")
+        channel = row.get(3, "")
+
+        if not tag or not module or not channel:
+            continue
+
+        try:
+            points.append(
+                DiPoint(
+                    tag=tag,
+                    module=int(float(module)),
+                    channel=int(float(channel)),
+                )
+            )
+        except ValueError:
+            continue
+
+    return points

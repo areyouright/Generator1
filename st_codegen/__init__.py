@@ -1,9 +1,15 @@
 """Utilities for generating ST code artifacts from Excel input."""
 
 from .xlsx_plc_reader import (
+    AiPoint,
+    DiPoint,
+    DoPoint,
     PhasePoint,
     PlcConfig,
     RtdPoint,
+    read_ai_points,
+    read_di_points,
+    read_do_points,
     read_phase_points,
     read_plc_config,
     read_rtd_points,
@@ -13,8 +19,14 @@ from .proc_io_generator import render_proc_io
 
 __all__ = [
     "PhasePoint",
+    "AiPoint",
+    "DiPoint",
+    "DoPoint",
     "PlcConfig",
     "RtdPoint",
+    "read_ai_points",
+    "read_di_points",
+    "read_do_points",
     "read_phase_points",
     "read_plc_config",
     "read_rtd_points",

@@ -2,13 +2,13 @@
 (*----------------------------Расчёт ошибки датчика температуры -----------------------------------*)
 // Инициализация датчиков и проверка их состояния
 
-TOF_AlarmRTD[1](IN := A1_13.xError, PT := T#2S);
-TOF_AlarmRTD[2](IN := A1_14.xError, PT := T#2S);
-TOF_AlarmRTD[3](IN := A1_15.xError, PT := T#2S);
-TOF_AlarmRTD[4](IN := A1_16.xError, PT := T#2S);
-TOF_AlarmRTD[5](IN := A1_17.xError, PT := T#2S);
-TOF_AlarmRTD[6](IN := A1_18.xError, PT := T#2S);
-TOF_AlarmRTD[7](IN := A1_19.xError, PT := T#2S);
+TOF_AlarmRTD[1](IN := A1_12.xError, PT := T#2S);
+TOF_AlarmRTD[2](IN := A1_13.xError, PT := T#2S);
+TOF_AlarmRTD[3](IN := A1_14.xError, PT := T#2S);
+TOF_AlarmRTD[4](IN := A1_15.xError, PT := T#2S);
+TOF_AlarmRTD[5](IN := A1_16.xError, PT := T#2S);
+TOF_AlarmRTD[6](IN := A1_17.xError, PT := T#2S);
+TOF_AlarmRTD[7](IN := A1_18.xError, PT := T#2S);
 
 // Датчик 0 (ТЕ0)
 GVL.DataPack.aDT[0].rT := GVL.RTDs[1].arValue[4];
@@ -107,6 +107,262 @@ GVL.DataPack.aDT[23].rT := GVL.RTDs[6].arValue[3];
 tonErr[23](IN := GVL.RTDs[6].awStatus[3] <> 0, PT := T#2S);
 GVL.DataPack.aDT[23].wErrDT := TO_WORD(tonErr[23].Q OR TOF_AlarmRTD[6].Q);
 
+// Инициализируем токи по линиям
+// KM1
+GVL.DataPack.Lines[1].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[1].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[1].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[1].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[1].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[1].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[1].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[1].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM2
+GVL.DataPack.Lines[2].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[1].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[2].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[1].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[2].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[1].awValue[5]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[2].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[1].awValue[6]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM3
+GVL.DataPack.Lines[3].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[2].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[3].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[2].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[3].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[2].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[3].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[2].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM4
+GVL.DataPack.Lines[4].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[2].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[4].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[2].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM5
+GVL.DataPack.Lines[5].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[2].awValue[5]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[5].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[2].awValue[6]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM6
+GVL.DataPack.Lines[6].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[3].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[6].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[3].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM7
+GVL.DataPack.Lines[7].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[3].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[7].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[3].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM8
+GVL.DataPack.Lines[8].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[3].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[8].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[3].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[8].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[3].awValue[5]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM9.1
+GVL.DataPack.Lines[9].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[3].awValue[6]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[9].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[4].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[9].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[4].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM9.2
+GVL.DataPack.Lines[10].Currents[1] := GVL.DataPack.Lines[9].Currents[1];
+GVL.DataPack.Lines[10].Currents[2] := GVL.DataPack.Lines[9].Currents[2];
+GVL.DataPack.Lines[10].Currents[4] := GVL.DataPack.Lines[9].Currents[4];
+
+// KM10.1
+GVL.DataPack.Lines[11].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[4].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[11].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[4].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[11].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[4].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[11].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[4].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM10.2
+GVL.DataPack.Lines[12].Currents[1] := GVL.DataPack.Lines[11].Currents[1];
+GVL.DataPack.Lines[12].Currents[2] := GVL.DataPack.Lines[11].Currents[2];
+GVL.DataPack.Lines[12].Currents[3] := GVL.DataPack.Lines[11].Currents[3];
+GVL.DataPack.Lines[12].Currents[4] := GVL.DataPack.Lines[11].Currents[4];
+
+// KM10.3
+GVL.DataPack.Lines[13].Currents[1] := GVL.DataPack.Lines[11].Currents[1];
+GVL.DataPack.Lines[13].Currents[2] := GVL.DataPack.Lines[11].Currents[2];
+GVL.DataPack.Lines[13].Currents[3] := GVL.DataPack.Lines[11].Currents[3];
+GVL.DataPack.Lines[13].Currents[4] := GVL.DataPack.Lines[11].Currents[4];
+
+// KM11
+GVL.DataPack.Lines[14].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[4].awValue[5]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[14].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[4].awValue[6]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM12
+GVL.DataPack.Lines[15].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[5].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[15].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[5].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM13
+GVL.DataPack.Lines[16].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[5].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[16].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[5].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM14
+GVL.DataPack.Lines[17].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[5].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[17].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[5].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM15
+GVL.DataPack.Lines[18].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[5].awValue[5]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[18].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[5].awValue[6]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM16
+GVL.DataPack.Lines[19].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[6].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[19].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[6].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM17
+GVL.DataPack.Lines[20].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[6].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[20].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[6].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM18
+GVL.DataPack.Lines[21].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[6].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[21].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[6].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM19
+GVL.DataPack.Lines[22].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[6].awValue[5]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[22].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[6].awValue[6]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM20
+GVL.DataPack.Lines[23].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[7].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[23].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[7].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM21
+GVL.DataPack.Lines[24].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[7].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[24].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[7].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[24].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[7].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[24].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[7].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM22
+GVL.DataPack.Lines[25].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[7].awValue[5]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[25].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[7].awValue[6]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM23
+GVL.DataPack.Lines[26].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[8].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[26].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[8].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[26].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[8].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM24
+GVL.DataPack.Lines[27].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[8].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[27].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[8].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[27].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[8].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM25
+GVL.DataPack.Lines[28].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[8].awValue[5]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[28].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[8].awValue[6]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM26
+GVL.DataPack.Lines[29].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[9].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[29].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[9].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[29].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[9].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[29].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[9].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM27
+GVL.DataPack.Lines[30].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[9].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[30].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[9].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM28
+GVL.DataPack.Lines[31].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[9].awValue[5]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[31].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[9].awValue[6]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[31].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[10].awValue[7]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[31].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[10].awValue[8]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+// KM29
+GVL.DataPack.Lines[32].Currents[1] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[10].awValue[1]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[32].Currents[2] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[10].awValue[2]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[32].Currents[3] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[10].awValue[3]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 63);
+GVL.DataPack.Lines[32].Currents[4] := OSCAT_BASIC.SCALE_R(X := WORD_TO_REAL(GVL.AIs[10].awValue[4]), I_LO := 6520, I_HI := 32768, O_LO := 0, O_HI := 50);
+
+////////	Читаем состояния дифф. автоматов + Обратная связь с контакторов
+GVL.DataPack.Lines[1].State.bState.TS.xStateQFD := NOT GVL.DIs[1].12;
+GVL.DataPack.Lines[1].State.bState.TS.xAlarmQFD := NOT GVL.DIs[1].13;
+GVL.DataPack.Lines[1].State.bState.TS.xON_OFF := GVL.DIs[1].14;
+GVL.DataPack.Lines[2].State.bState.TS.xStateQFD := NOT GVL.DIs[1].15;
+GVL.DataPack.Lines[2].State.bState.TS.xAlarmQFD := NOT GVL.DIs[1].0;
+GVL.DataPack.Lines[2].State.bState.TS.xON_OFF := GVL.DIs[1].1;
+GVL.DataPack.Lines[3].State.bState.TS.xStateQFD := NOT GVL.DIs[1].2;
+GVL.DataPack.Lines[3].State.bState.TS.xAlarmQFD := NOT GVL.DIs[1].3;
+GVL.DataPack.Lines[3].State.bState.TS.xON_OFF := GVL.DIs[1].4;
+GVL.DataPack.Lines[4].State.bState.TS.xStateQFD := NOT GVL.DIs[1].5;
+GVL.DataPack.Lines[4].State.bState.TS.xAlarmQFD := NOT GVL.DIs[1].6;
+GVL.DataPack.Lines[4].State.bState.TS.xON_OFF := GVL.DIs[1].7;
+GVL.DataPack.Lines[5].State.bState.TS.xStateQFD := NOT GVL.DIs[1].8;
+GVL.DataPack.Lines[5].State.bState.TS.xAlarmQFD := NOT GVL.DIs[1].9;
+GVL.DataPack.Lines[5].State.bState.TS.xON_OFF := GVL.DIs[1].10;
+GVL.DataPack.Lines[6].State.bState.TS.xStateQFD := NOT GVL.DIs[1].11;
+GVL.DataPack.Lines[6].State.bState.TS.xAlarmQFD := NOT GVL.DIs[2].12;
+GVL.DataPack.Lines[6].State.bState.TS.xON_OFF := GVL.DIs[2].13;
+GVL.DataPack.Lines[7].State.bState.TS.xStateQFD := NOT GVL.DIs[2].14;
+GVL.DataPack.Lines[7].State.bState.TS.xAlarmQFD := NOT GVL.DIs[2].15;
+GVL.DataPack.Lines[7].State.bState.TS.xON_OFF := GVL.DIs[2].0;
+GVL.DataPack.Lines[8].State.bState.TS.xStateQFD := NOT GVL.DIs[2].1;
+GVL.DataPack.Lines[8].State.bState.TS.xAlarmQFD := NOT GVL.DIs[2].2;
+GVL.DataPack.Lines[8].State.bState.TS.xON_OFF := GVL.DIs[2].3;
+GVL.DataPack.Lines[9].State.bState.TS.xStateQFD := NOT GVL.DIs[2].4;
+GVL.DataPack.Lines[9].State.bState.TS.xAlarmQFD := NOT GVL.DIs[2].5;
+GVL.DataPack.Lines[9].State.bState.TS.xON_OFF := GVL.DIs[2].6;
+GVL.DataPack.Lines[10].State.bState.TS.xStateQFD := GVL.DataPack.Lines[9].State.bState.TS.xStateQFD;
+GVL.DataPack.Lines[10].State.bState.TS.xAlarmQFD := GVL.DataPack.Lines[9].State.bState.TS.xAlarmQFD;
+GVL.DataPack.Lines[10].State.bState.TS.xON_OFF := GVL.DIs[2].7;
+GVL.DataPack.Lines[11].State.bState.TS.xStateQFD := NOT GVL.DIs[2].8;
+GVL.DataPack.Lines[11].State.bState.TS.xAlarmQFD := NOT GVL.DIs[2].9;
+GVL.DataPack.Lines[11].State.bState.TS.xON_OFF := GVL.DIs[2].10;
+GVL.DataPack.Lines[12].State.bState.TS.xStateQFD := GVL.DataPack.Lines[11].State.bState.TS.xStateQFD;
+GVL.DataPack.Lines[12].State.bState.TS.xAlarmQFD := GVL.DataPack.Lines[11].State.bState.TS.xAlarmQFD;
+GVL.DataPack.Lines[12].State.bState.TS.xON_OFF := GVL.DIs[2].11;
+GVL.DataPack.Lines[13].State.bState.TS.xStateQFD := GVL.DataPack.Lines[11].State.bState.TS.xStateQFD;
+GVL.DataPack.Lines[13].State.bState.TS.xAlarmQFD := GVL.DataPack.Lines[11].State.bState.TS.xAlarmQFD;
+GVL.DataPack.Lines[13].State.bState.TS.xON_OFF := GVL.DIs[3].12;
+GVL.DataPack.Lines[14].State.bState.TS.xStateQFD := NOT GVL.DIs[3].13;
+GVL.DataPack.Lines[14].State.bState.TS.xAlarmQFD := NOT GVL.DIs[3].14;
+GVL.DataPack.Lines[14].State.bState.TS.xON_OFF := GVL.DIs[3].15;
+GVL.DataPack.Lines[15].State.bState.TS.xStateQFD := NOT GVL.DIs[3].0;
+GVL.DataPack.Lines[15].State.bState.TS.xAlarmQFD := NOT GVL.DIs[3].1;
+GVL.DataPack.Lines[15].State.bState.TS.xON_OFF := GVL.DIs[3].2;
+GVL.DataPack.Lines[16].State.bState.TS.xStateQFD := NOT GVL.DIs[3].3;
+GVL.DataPack.Lines[16].State.bState.TS.xAlarmQFD := NOT GVL.DIs[3].4;
+GVL.DataPack.Lines[16].State.bState.TS.xON_OFF := GVL.DIs[3].5;
+GVL.DataPack.Lines[17].State.bState.TS.xStateQFD := NOT GVL.DIs[3].6;
+GVL.DataPack.Lines[17].State.bState.TS.xAlarmQFD := NOT GVL.DIs[3].7;
+GVL.DataPack.Lines[17].State.bState.TS.xON_OFF := GVL.DIs[3].8;
+GVL.DataPack.Lines[18].State.bState.TS.xStateQFD := NOT GVL.DIs[3].9;
+GVL.DataPack.Lines[18].State.bState.TS.xAlarmQFD := NOT GVL.DIs[3].10;
+GVL.DataPack.Lines[18].State.bState.TS.xON_OFF := GVL.DIs[3].11;
+GVL.DataPack.Lines[19].State.bState.TS.xStateQFD := NOT GVL.DIs[4].12;
+GVL.DataPack.Lines[19].State.bState.TS.xAlarmQFD := NOT GVL.DIs[4].13;
+GVL.DataPack.Lines[19].State.bState.TS.xON_OFF := GVL.DIs[4].14;
+GVL.DataPack.Lines[20].State.bState.TS.xStateQFD := NOT GVL.DIs[4].15;
+GVL.DataPack.Lines[20].State.bState.TS.xAlarmQFD := NOT GVL.DIs[4].0;
+GVL.DataPack.Lines[20].State.bState.TS.xON_OFF := GVL.DIs[4].1;
+GVL.DataPack.Lines[21].State.bState.TS.xStateQFD := NOT GVL.DIs[4].2;
+GVL.DataPack.Lines[21].State.bState.TS.xAlarmQFD := NOT GVL.DIs[4].3;
+GVL.DataPack.Lines[21].State.bState.TS.xON_OFF := GVL.DIs[4].4;
+GVL.DataPack.Lines[22].State.bState.TS.xStateQFD := NOT GVL.DIs[4].5;
+GVL.DataPack.Lines[22].State.bState.TS.xAlarmQFD := NOT GVL.DIs[4].6;
+GVL.DataPack.Lines[22].State.bState.TS.xON_OFF := GVL.DIs[4].7;
+GVL.DataPack.Lines[23].State.bState.TS.xStateQFD := NOT GVL.DIs[4].8;
+GVL.DataPack.Lines[23].State.bState.TS.xAlarmQFD := NOT GVL.DIs[4].9;
+GVL.DataPack.Lines[23].State.bState.TS.xON_OFF := GVL.DIs[4].10;
+GVL.DataPack.Lines[24].State.bState.TS.xStateQFD := NOT GVL.DIs[4].11;
+GVL.DataPack.Lines[24].State.bState.TS.xAlarmQFD := NOT GVL.DIs[5].12;
+GVL.DataPack.Lines[24].State.bState.TS.xON_OFF := GVL.DIs[5].13;
+GVL.DataPack.Lines[25].State.bState.TS.xStateQFD := NOT GVL.DIs[5].14;
+GVL.DataPack.Lines[25].State.bState.TS.xAlarmQFD := NOT GVL.DIs[5].15;
+GVL.DataPack.Lines[25].State.bState.TS.xON_OFF := GVL.DIs[5].0;
+GVL.DataPack.Lines[26].State.bState.TS.xStateQFD := NOT GVL.DIs[5].1;
+GVL.DataPack.Lines[26].State.bState.TS.xAlarmQFD := NOT GVL.DIs[5].2;
+GVL.DataPack.Lines[26].State.bState.TS.xON_OFF := GVL.DIs[5].3;
+GVL.DataPack.Lines[27].State.bState.TS.xStateQFD := NOT GVL.DIs[5].4;
+GVL.DataPack.Lines[27].State.bState.TS.xAlarmQFD := NOT GVL.DIs[5].5;
+GVL.DataPack.Lines[27].State.bState.TS.xON_OFF := GVL.DIs[5].6;
+GVL.DataPack.Lines[28].State.bState.TS.xStateQFD := NOT GVL.DIs[5].7;
+GVL.DataPack.Lines[28].State.bState.TS.xAlarmQFD := NOT GVL.DIs[5].8;
+GVL.DataPack.Lines[28].State.bState.TS.xON_OFF := GVL.DIs[5].9;
+GVL.DataPack.Lines[29].State.bState.TS.xStateQFD := NOT GVL.DIs[5].10;
+GVL.DataPack.Lines[29].State.bState.TS.xAlarmQFD := NOT GVL.DIs[5].11;
+GVL.DataPack.Lines[29].State.bState.TS.xON_OFF := GVL.DIs[6].12;
+GVL.DataPack.Lines[30].State.bState.TS.xStateQFD := NOT GVL.DIs[6].13;
+GVL.DataPack.Lines[30].State.bState.TS.xAlarmQFD := NOT GVL.DIs[6].14;
+GVL.DataPack.Lines[30].State.bState.TS.xON_OFF := GVL.DIs[6].15;
+GVL.DataPack.Lines[31].State.bState.TS.xStateQFD := NOT GVL.DIs[6].0;
+GVL.DataPack.Lines[31].State.bState.TS.xAlarmQFD := NOT GVL.DIs[6].1;
+GVL.DataPack.Lines[31].State.bState.TS.xON_OFF := GVL.DIs[6].2;
+GVL.DataPack.Lines[32].State.bState.TS.xStateQFD := NOT GVL.DIs[6].3;
+GVL.DataPack.Lines[32].State.bState.TS.xAlarmQFD := NOT GVL.DIs[6].4;
+GVL.DataPack.Lines[32].State.bState.TS.xON_OFF := GVL.DIs[6].5;
+
+////////	Читаем состояния обогрева
+GVL.DataPack.advance.bState.ManuON	:=	GVL.DIs[6].6;	// Обогрев в ручном режиме
+GVL.DataPack.advance.bState.Auto	:=	GVL.DIs[6].7;	// Обогрев в автоматическом режиме
+
 // Инициализируем фазировку
 GVL.inNumL[1] := 3;
 GVL.inNumL[2] := 7;
@@ -152,21 +408,20 @@ GVL.Err_mod[7]	:=	A1_8.xError;	// AI-модуль
 GVL.Err_mod[8]	:=	A1_9.xError;	// AI-модуль
 GVL.Err_mod[9]	:=	A1_10.xError;	// AI-модуль
 GVL.Err_mod[10]	:=	A1_11.xError;	// AI-модуль
-GVL.Err_mod[11]	:=	A1_12.xError;	// AI-модуль
+GVL.Err_mod[11]	:=	A1_12.xError;	// RTD-модуль
 GVL.Err_mod[12]	:=	A1_13.xError;	// RTD-модуль
 GVL.Err_mod[13]	:=	A1_14.xError;	// RTD-модуль
 GVL.Err_mod[14]	:=	A1_15.xError;	// RTD-модуль
 GVL.Err_mod[15]	:=	A1_16.xError;	// RTD-модуль
 GVL.Err_mod[16]	:=	A1_17.xError;	// RTD-модуль
 GVL.Err_mod[17]	:=	A1_18.xError;	// RTD-модуль
-GVL.Err_mod[18]	:=	A1_19.xError;	// RTD-модуль
+GVL.Err_mod[18]	:=	A1_19.xError;	// DI-модуль
 GVL.Err_mod[19]	:=	A1_20.xError;	// DI-модуль
 GVL.Err_mod[20]	:=	A1_21.xError;	// DI-модуль
 GVL.Err_mod[21]	:=	A1_22.xError;	// DI-модуль
 GVL.Err_mod[22]	:=	A1_23.xError;	// DI-модуль
 GVL.Err_mod[23]	:=	A1_24.xError;	// DI-модуль
 GVL.Err_mod[24]	:=	A1_25.xError;	// DI-модуль
-GVL.Err_mod[25]	:=	A1_26.xError;	// DI-модуль
+GVL.Err_mod[25]	:=	A1_26.xError;	// DO-модуль
 GVL.Err_mod[26]	:=	A1_27.xError;	// DO-модуль
 GVL.Err_mod[27]	:=	A1_28.xError;	// DO-модуль
-GVL.Err_mod[28]	:=	A1_29.xError;	// DO-модуль
