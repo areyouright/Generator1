@@ -28,6 +28,17 @@ class PlcConfig:
 
 
 @dataclass(frozen=True)
+class ProtocolParams:
+    num_qf: int | None
+    num_fd: int | None
+    num_qfd: int | None
+    key_auto: str | None
+    num_cont_auto: int | None
+    num_cont_manu: int | None
+    num_km: int | None
+
+
+@dataclass(frozen=True)
 class RtdPoint:
     tag: str
     module: int
@@ -186,6 +197,37 @@ def read_plc_config(xlsx_path: str | Path) -> PlcConfig:
         count_lines=params["count lines"],
         count_dt=params["count dt"],
         first_group=params["first_group"],
+    )
+
+
+def read_protocol_params(xlsx_path: str | Path) -> ProtocolParams:
+    rows = _load_sheet_rows(xlsx_path, "PLC")
+
+    protocol_values: list[str] = []
+    for row in rows:
+        key = row.get(2, "")
+        value = row.get(1, "")
+        if not key.startswith("="):
+            continue
+        if key[1:].strip().lower() == "для протокола":
+            protocol_values.append(value)
+
+    def _to_int(raw: str | None) -> int | None:
+        if raw is None or raw == "":
+            return None
+        try:
+            return int(float(raw))
+        except ValueError:
+            return None
+
+    return ProtocolParams(
+        num_qf=_to_int(protocol_values[0]) if len(protocol_values) > 0 else None,
+        num_fd=_to_int(protocol_values[1]) if len(protocol_values) > 1 else None,
+        num_qfd=_to_int(protocol_values[2]) if len(protocol_values) > 2 else None,
+        key_auto=protocol_values[3] if len(protocol_values) > 3 else None,
+        num_cont_auto=_to_int(protocol_values[4]) if len(protocol_values) > 4 else None,
+        num_cont_manu=_to_int(protocol_values[5]) if len(protocol_values) > 5 else None,
+        num_km=_to_int(protocol_values[6]) if len(protocol_values) > 6 else None,
     )
 
 
