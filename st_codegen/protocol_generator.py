@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
-from .xlsx_plc_reader import AiPoint, DiPoint, DoPoint, PlcConfig, RtdPoint
+from .xlsx_plc_reader import AiPoint, DiPoint, DoPoint, PlcConfig, ProtocolParams, RtdPoint
 
 
 AI_HEADERS = [
@@ -44,9 +44,26 @@ DO_HEADERS = [
     "Результат проверки канала",
 ]
 
+COLUMN_WIDTHS = [3.71, 39.57, 9.71, 12.71, 9.14, 12.71, 12.71, 16.14, 16.14, 12.57]
+
 
 def _phase_letter(current_no: int) -> str:
     return {1: "A", 2: "B", 3: "C"}.get(current_no, "")
+
+
+def _module_address(config: PlcConfig, io_type: str, module: int) -> str:
+    if io_type == "ai":
+        module_idx = module
+    elif io_type == "rtd":
+        module_idx = config.count_ai + module
+    elif io_type == "di":
+        module_idx = config.count_ai + config.count_rtd + module
+    elif io_type == "do":
+        module_idx = config.count_ai + config.count_rtd + config.count_di + module
+    else:
+        raise ValueError(f"Unsupported io_type: {io_type}")
+
+    return f"A1_{module_idx + 1}"
 
 
 def _ai_parameter_name(tag: str) -> str:
@@ -93,8 +110,26 @@ def _do_parameter_name(tag: str) -> str:
     return f"Команда {tag.upper()}"
 
 
+def _di_contact(tag: str, protocol: ProtocolParams) -> int | str:
+    normalized = tag.strip().lower()
+    if re.fullmatch(r"qfds\d+", normalized) or re.fullmatch(r"qfd\d+", normalized):
+        return protocol.num_qfd if protocol.num_qfd is not None else ""
+    if re.fullmatch(r"qf\d+", normalized):
+        return protocol.num_qf if protocol.num_qf is not None else ""
+    if re.fullmatch(r"fd\d+", normalized):
+        return protocol.num_fd if protocol.num_fd is not None else ""
+    if re.fullmatch(r"km\d+(?:\.\d+)?", normalized):
+        return 3
+    if normalized in {"manu", "manuon"}:
+        return protocol.num_cont_manu if protocol.num_cont_manu is not None else ""
+    if normalized == "auto":
+        return protocol.num_cont_auto if protocol.num_cont_auto is not None else ""
+    return ""
+
+
 def _collect_rows(
     config: PlcConfig,
+    protocol: ProtocolParams,
     ai_points: list[AiPoint],
     di_points: list[DiPoint],
     do_points: list[DoPoint],
@@ -107,7 +142,7 @@ def _collect_rows(
             [
                 index,
                 _ai_parameter_name(point.tag),
-                f"A3.{point.module}",
+                _module_address(config, "ai", point.module),
                 point.channel,
                 point.tag.upper(),
                 1,
@@ -123,7 +158,7 @@ def _collect_rows(
             [
                 index,
                 f"Датчик температуры {dt_index}",
-                f"A4.{point.module}",
+                _module_address(config, "rtd", point.module),
                 point.channel,
                 point.tag.upper(),
                 "",
@@ -140,10 +175,10 @@ def _collect_rows(
             [
                 i,
                 _di_parameter_name(point.tag),
-                f"A1.{point.module}",
+                _module_address(config, "di", point.module),
                 point.channel,
                 point.tag.upper(),
-                "",
+                _di_contact(point.tag, protocol),
                 "24В, вх.",
                 "соответств.",
                 "исправен",
@@ -156,7 +191,7 @@ def _collect_rows(
             [
                 i,
                 _do_parameter_name(point.tag),
-                f"A2.{point.module}",
+                _module_address(config, "do", point.module),
                 point.channel,
                 "24В, вых.",
                 "соответств.",
@@ -177,15 +212,26 @@ def _col_letter(index: int) -> str:
 
 
 def _cell_xml(ref: str, value: object) -> str:
+    style = ' s="1"'
     if isinstance(value, (int, float)) and not isinstance(value, bool):
-        return f'<c r="{ref}"><v>{value}</v></c>'
+        return f'<c r="{ref}"{style}><v>{value}</v></c>'
     escaped = html.escape(str(value))
-    return f'<c r="{ref}" t="inlineStr"><is><t>{escaped}</t></is></c>'
+    return f'<c r="{ref}" t="inlineStr"{style}><is><t>{escaped}</t></is></c>'
+
+
+def _cols_xml(max_col: int) -> str:
+    parts: list[str] = []
+    for idx in range(1, max_col + 1):
+        width = COLUMN_WIDTHS[idx - 1] if idx - 1 < len(COLUMN_WIDTHS) else 12.57
+        parts.append(f'<col min="{idx}" max="{idx}" width="{width}" customWidth="1"/>')
+    return "".join(parts)
 
 
 def _sheet_xml(rows: Iterable[list[object]]) -> str:
     row_xml: list[str] = []
+    max_col = 1
     for r_index, row in enumerate(rows, start=1):
+        max_col = max(max_col, len(row))
         cells = [
             _cell_xml(f"{_col_letter(c_index)}{r_index}", value)
             for c_index, value in enumerate(row, start=1)
@@ -195,6 +241,7 @@ def _sheet_xml(rows: Iterable[list[object]]) -> str:
     return (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+        f'<cols>{_cols_xml(max_col)}</cols>'
         f'<sheetData>{"".join(row_xml)}</sheetData>'
         "</worksheet>"
     )
@@ -202,13 +249,14 @@ def _sheet_xml(rows: Iterable[list[object]]) -> str:
 
 def render_protocol_excel(
     config: PlcConfig,
+    protocol: ProtocolParams,
     ai_points: list[AiPoint],
     di_points: list[DiPoint],
     do_points: list[DoPoint],
     rtd_points: list[RtdPoint],
     output_path: str,
 ) -> None:
-    di_rows, do_rows, ai_rows = _collect_rows(config, ai_points, di_points, do_points, rtd_points)
+    di_rows, do_rows, ai_rows = _collect_rows(config, protocol, ai_points, di_points, do_points, rtd_points)
     created = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
     content_types = """<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
@@ -219,6 +267,7 @@ def render_protocol_excel(
   <Override PartName=\"/xl/worksheets/sheet1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/>
   <Override PartName=\"/xl/worksheets/sheet2.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/>
   <Override PartName=\"/xl/worksheets/sheet3.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/>
+  <Override PartName=\"/xl/styles.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml\"/>
   <Override PartName=\"/docProps/core.xml\" ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\"/>
   <Override PartName=\"/docProps/app.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.extended-properties+xml\"/>
 </Types>
@@ -247,7 +296,27 @@ def render_protocol_excel(
   <Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet1.xml\"/>
   <Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet2.xml\"/>
   <Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet3.xml\"/>
+  <Relationship Id=\"rId4\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/>
 </Relationships>
+"""
+
+    styles = """<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">
+  <fonts count=\"1\">
+    <font><sz val=\"11\"/><name val=\"Times New Roman\"/></font>
+  </fonts>
+  <fills count=\"2\">
+    <fill><patternFill patternType=\"none\"/></fill>
+    <fill><patternFill patternType=\"gray125\"/></fill>
+  </fills>
+  <borders count=\"1\"><border><left/><right/><top/><bottom/><diagonal/></border></borders>
+  <cellStyleXfs count=\"1\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/></cellStyleXfs>
+  <cellXfs count=\"2\">
+    <xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>
+    <xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\" wrapText=\"1\"/></xf>
+  </cellXfs>
+  <cellStyles count=\"1\"><cellStyle name=\"Normal\" xfId=\"0\" builtinId=\"0\"/></cellStyles>
+</styleSheet>
 """
 
     core = f"""<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
@@ -276,6 +345,7 @@ def render_protocol_excel(
         zf.writestr("docProps/app.xml", app)
         zf.writestr("xl/workbook.xml", workbook)
         zf.writestr("xl/_rels/workbook.xml.rels", workbook_rels)
+        zf.writestr("xl/styles.xml", styles)
         zf.writestr("xl/worksheets/sheet1.xml", _sheet_xml(di_rows))
         zf.writestr("xl/worksheets/sheet2.xml", _sheet_xml(do_rows))
         zf.writestr("xl/worksheets/sheet3.xml", _sheet_xml(ai_rows))
